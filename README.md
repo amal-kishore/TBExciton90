@@ -48,6 +48,9 @@ tbx90 compute --config config.yaml
 # With GPU acceleration
 tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt --gpu
 
+# With MPI parallelization (4 processes)
+mpirun -np 4 tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt --mpi
+
 # Generate plots from existing results
 tbx90 plot --results-dir ./results --plot-type all
 tbx90 plot --plot-type excitons

@@ -160,6 +160,15 @@ tbx90 compute \
   --gpu
 ```
 
+**With MPI parallelization:**
+```bash
+# Run on 4 processes
+mpirun -np 4 tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt --mpi
+
+# Run on 8 processes with GPU
+mpirun -np 8 tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt --mpi --gpu
+```
+
 **Generate plots from existing results:**
 ```bash
 # Plot all types
@@ -326,7 +335,17 @@ output:
 
 1. **Small systems** (< 100 k-points): CPU is fine
 2. **Medium systems** (< 1000 k-points): Use GPU
-3. **Large systems** (> 1000 k-points): GPU + MPI
+3. **Large systems** (> 1000 k-points): Use MPI parallelization
+4. **Very large systems** (> 5000 k-points): Use both GPU + MPI
+
+**MPI Usage:**
+```bash
+# For large calculations
+mpirun -np 4 tbx90 compute --input system_hr.dat --kpoints system_band.kpt --mpi
+
+# For very large calculations with GPU
+mpirun -np 8 tbx90 compute --input system_hr.dat --kpoints system_band.kpt --mpi --gpu
+```
 
 Memory scaling: O(N_k × N_v × N_c)
 

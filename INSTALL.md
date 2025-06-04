@@ -190,6 +190,9 @@ tbx90 generate-config --example gpu --output my_config.yaml
 # Run with config
 tbx90 compute --config my_config.yaml
 
+# With MPI parallelization
+mpirun -np 4 tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt --mpi
+
 # Generate plots from existing results
 tbx90 plot --results-dir ./results --plot-type all
 tbx90 plot --plot-type bands
