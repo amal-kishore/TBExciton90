@@ -21,9 +21,8 @@ TBExciton90 computes **exciton properties** (bound electron-hole pairs) in mater
 
 ### Key Features
 
-- **Easy to Use**: One command to go from Wannier90 files to publication-ready plots  
+- **Easy to Use**: One command to go from Wannier90 files to excitonic properties  
 - **Fast**: GPU acceleration and MPI parallelization support  
-- **Professional**: Publication-ready plots with customizable styling  
 - **Scientific**: Proper treatment of electron-hole interactions  
 - **Comprehensive**: Band structures, exciton spectra, absorption, and wavefunctions  
 
@@ -74,11 +73,11 @@ print(f"Binding energy: {results['binding_energy']:.3f} eV")
 
 After running TBExciton90, you'll have:
 
-- **Electronic band structure** with highlighted band edges
+- **Electronic band structure**
 - **Exciton energy spectrum** distinguishing bright (optically active) vs dark states  
 - **Optical absorption** comparing with/without electron-hole interactions
 - **Real-space wavefunctions** showing exciton size and shape
-- **Summary data** in both human-readable and HDF5 formats
+- **Summary data**
 
 <p align="center">
   <img src="docs/example_plots.png" alt="Example TBExciton90 outputs" width="800">
@@ -121,8 +120,8 @@ If you use TBExciton90 in your research, please cite:
 ```bibtex
 @software{tbexciton90,
   title = {TBExciton90: Excitonic properties from Wannier-based tight-binding models},
-  author = {TBExciton90 Development Team},
-  year = {2024},
+  author = {amal kishore},
+  year = {2025},
   url = {https://github.com/amal-kishore/TBExciton90},
   version = {0.1.0}
 }
@@ -136,7 +135,7 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 - **Bug reports**: [GitHub Issues](https://github.com/amal-kishore/TBExciton90/issues)
 - **Questions**: [GitHub Discussions](https://github.com/amal-kishore/TBExciton90/discussions)  
-- **Email**: amal.kishore@example.com
+- **Email**: amalk4905@gmail.com
 
 ## License
 

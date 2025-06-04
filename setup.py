@@ -9,8 +9,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="tbexciton90",
     version="0.1.0",
-    author="TBExciton90 Development Team",
-    author_email="",
+    author="amal kishore",
+    author_email="amalk4905@gmail.com",
     description="Excitonic properties from Wannier-based tight-binding models",
     long_description=long_description,
     long_description_content_type="text/markdown",

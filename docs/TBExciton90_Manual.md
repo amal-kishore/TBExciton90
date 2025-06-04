@@ -380,8 +380,8 @@ If you use TBExciton90 in your research:
 ```bibtex
 @software{tbexciton90,
   title = {TBExciton90: Excitonic properties from Wannier-based tight-binding models},
-  author = {TBExciton90 Development Team},
-  year = {2024},
+  author = {amal kishore},
+  year = {2025},
   url = {https://github.com/amal-kishore/TBExciton90}
 }
 ```
