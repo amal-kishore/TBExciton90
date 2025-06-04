@@ -50,6 +50,9 @@ tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt --gpu
 # With MPI parallelization (4 processes)
 mpirun -np 4 tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt --mpi
 
+# Test k-point convergence (essential for reliable results)
+tbx90 convergence --input silicon_hr.dat --material-type 3D
+
 # Generate plots from existing results
 tbx90 plot --results-dir ./results --plot-type all
 tbx90 plot --plot-type excitons

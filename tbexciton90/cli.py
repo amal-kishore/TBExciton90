@@ -492,6 +492,88 @@ def test():
 
 
 @main.command()
+@click.option('--input', '-i', required=True, type=click.Path(exists=True),
+              help='Wannier90 HR file')
+@click.option('--centres', type=click.Path(exists=True),
+              help='Wannier centres file (optional)')
+@click.option('--material-type', default='3D',
+              type=click.Choice(['3D', '2D', '1D']),
+              help='Material dimensionality')
+@click.option('--num-valence', type=int, default=4,
+              help='Number of valence bands')
+@click.option('--num-conduction', type=int, default=4,
+              help='Number of conduction bands')
+@click.option('--num-excitons', type=int, default=5,
+              help='Number of exciton states')
+@click.option('--screening', type=float, default=0.1,
+              help='Screening parameter')
+@click.option('--output-dir', '-o', default='./convergence_test',
+              help='Output directory')
+def convergence(input, centres, material_type, num_valence, num_conduction, 
+               num_excitons, screening, output_dir):
+    """Test k-point convergence for BSE calculations."""
+    from .utils.convergence import ConvergenceTest, suggest_kpoint_grids
+    
+    click.echo("=" * 60)
+    click.echo("K-Point Convergence Test")
+    click.echo("=" * 60)
+    
+    # Get suggested k-point grids
+    k_grids = suggest_kpoint_grids(material_type)
+    click.echo(f"\nTesting {len(k_grids)} k-point grids for {material_type} material:")
+    for i, grid in enumerate(k_grids):
+        total_k = grid[0] * grid[1] * grid[2]
+        click.echo(f"  {i+1}. {grid[0]}×{grid[1]}×{grid[2]} ({total_k} k-points)")
+    
+    # Initialize convergence tester
+    conv_test = ConvergenceTest(input, centres)
+    
+    # Run convergence test
+    try:
+        results = conv_test.test_kpoint_convergence(
+            k_grids=k_grids,
+            num_valence=num_valence,
+            num_conduction=num_conduction,
+            num_exciton_states=num_excitons,
+            screening=screening,
+            output_dir=output_dir
+        )
+        
+        # Print summary
+        click.echo("\n" + "=" * 60)
+        click.echo("Convergence Test Results")
+        click.echo("=" * 60)
+        
+        if 'convergence_thresholds' in results:
+            thresh = results['convergence_thresholds']
+            click.echo(f"\nConvergence thresholds (last two calculations):")
+            click.echo(f"  Band gap difference: {thresh['bandgap_diff']:.6f} eV")
+            click.echo(f"  Exciton difference: {thresh['exciton_diff']:.6f} eV")
+            click.echo(f"  Binding difference: {thresh['binding_diff']:.6f} eV")
+            
+            if (results.get('bandgap_convergence', False) and 
+                results.get('exciton_convergence', False)):
+                click.echo(f"\n✓ CONVERGED (differences < 1 meV)")
+                click.echo(f"  Recommended k-grid: {k_grids[-2]} or finer")
+            else:
+                click.echo(f"\n✗ NOT CONVERGED")
+                click.echo(f"  Recommendation: Use finer k-point grid")
+        
+        if 'exciton_extrapolated' in results:
+            click.echo(f"\nExtrapolated values (infinite k-points):")
+            click.echo(f"  Band gap: {results['bandgap_extrapolated']:.6f} eV")
+            click.echo(f"  Lowest exciton: {results['exciton_extrapolated']:.6f} eV")
+            click.echo(f"  Binding energy: {results['binding_extrapolated']:.6f} eV")
+        
+        click.echo(f"\nDetailed results saved to: {output_dir}")
+        click.echo(f"Convergence plots: {output_dir}/kpoint_convergence.png")
+        
+    except Exception as e:
+        click.echo(f"\nError during convergence test: {e}")
+        sys.exit(1)
+
+
+@main.command()
 @click.option('--results-dir', '-r', default='./results',
               help='Directory containing calculation results')
 @click.option('--output-dir', '-o', default='./plots',

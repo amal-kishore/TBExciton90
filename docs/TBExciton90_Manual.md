@@ -43,6 +43,52 @@ Excitons are bound states of electrons and holes that determine optical properti
 
 ## Theoretical Background
 
+### Understanding k-points and Q-points
+
+**k-points (Crystal Momentum)**
+- k-points represent momentum states of electrons in the crystal
+- They come from the periodicity of the crystal lattice  
+- Each k-point corresponds to a Bloch wave: ψ(r) = e^(ik·r) u(r)
+- Your calculations sample the Brillouin zone with a k-point grid
+
+**Q-points (Exciton Momentum)**
+- Q-points represent the total momentum of the exciton (electron-hole pair)
+- Q = k_electron - k_hole (difference in momenta)
+- Most optical calculations focus on Q=0 (optically allowed excitons)
+
+### BSE Mathematical Framework
+
+**Step 1: Single-Particle States**
+Solve the tight-binding Hamiltonian for each k-point:
+```
+H(k) |ψ_nk⟩ = E_nk |ψ_nk⟩
+```
+This gives electron energies E_nk and wavefunctions ψ_nk.
+
+**Step 2: Electron-Hole Pairs**
+Create electron-hole pairs by exciting electron from valence (v) to conduction (c):
+```
+|vck⟩ = c†_ck c_vk |0⟩
+```
+
+**Step 3: Exciton Wavefunction**
+The exciton is a linear combination of electron-hole pairs:
+```
+|Ψ_S⟩ = Σ_vck A^S_vck |vck⟩
+```
+The A^S_vck coefficients are what we solve for.
+
+**Step 4: BSE Matrix Equation**
+```
+H^BSE · A^S = Ω^S · A^S
+```
+Where:
+```
+H^BSE = (E_ck - E_vk) + Interaction_Kernel
+```
+- First term: Free electron-hole pair energy
+- Second term: Coulomb attraction between electron and hole
+
 ### Tight-Binding Hamiltonian
 
 The Hamiltonian in k-space from Wannier90:
@@ -135,6 +181,7 @@ tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt
 
 **Available commands:**
 - `compute` - Run full exciton calculation
+- `convergence` - Test k-point convergence
 - `plot` - Generate plots from existing results
 - `generate-config` - Create configuration files
 - `test` - Test installation
@@ -178,6 +225,18 @@ tbx90 plot --results-dir ./results --output-dir ./plots
 tbx90 plot --plot-type bands
 tbx90 plot --plot-type excitons --output-dir ./exciton_plots
 tbx90 plot --plot-type absorption
+```
+
+**Test k-point convergence:**
+```bash
+# For 3D material (like silicon)
+tbx90 convergence --input silicon_hr.dat --material-type 3D
+
+# For 2D material
+tbx90 convergence --input material_hr.dat --material-type 2D --num-valence 4
+
+# With custom parameters
+tbx90 convergence --input silicon_hr.dat --num-valence 4 --num-conduction 4 --screening 0.1
 ```
 
 **Test installation:**
@@ -344,6 +403,74 @@ mpirun -np 8 tbx90 compute --input system_hr.dat --kpoints system_band.kpt --mpi
 ```
 
 Memory scaling: O(N_k × N_v × N_c)
+
+---
+
+## Convergence Testing
+
+**Why convergence testing is essential:**
+
+BSE calculations must be converged with respect to k-point sampling to ensure reliable results. Insufficient k-points can lead to:
+- Incorrect exciton binding energies
+- Missing exciton states
+- Wrong oscillator strengths
+
+### Automatic Convergence Testing
+
+```bash
+# Test convergence for silicon (3D material)
+tbx90 convergence --input silicon_hr.dat --material-type 3D
+```
+
+**What this does:**
+1. Tests k-grids: 2×2×2, 4×4×4, 6×6×6, 8×8×8, 10×10×10
+2. Computes band gap, exciton energies, binding energies for each grid
+3. Checks convergence criterion (< 1 meV difference)
+4. Generates convergence plots
+5. Extrapolates to infinite k-points
+6. Recommends optimal k-grid
+
+**Output files:**
+- `kpoint_convergence.png` - Convergence plots
+- `convergence_results.json` - Detailed numerical results
+- `convergence_summary.txt` - Human-readable summary
+
+### Convergence Criteria
+
+**Converged calculation:**
+- Band gap difference < 1 meV between successive grids
+- Exciton energy difference < 1 meV
+- Binding energy difference < 1 meV
+
+**Recommended k-grids:**
+- **3D materials**: Start with 6×6×6, check convergence
+- **2D materials**: Start with 12×12×1, check convergence  
+- **1D materials**: Start with 24×1×1, check convergence
+
+### Manual Convergence Check
+
+```python
+from tbexciton90.utils.convergence import ConvergenceTest
+
+# Initialize convergence tester
+conv_test = ConvergenceTest('silicon_hr.dat')
+
+# Define k-grids to test
+k_grids = [(4,4,4), (6,6,6), (8,8,8), (10,10,10)]
+
+# Run convergence test
+results = conv_test.test_kpoint_convergence(
+    k_grids=k_grids,
+    num_valence=4,
+    num_conduction=4,
+    output_dir='./convergence'
+)
+
+# Check if converged
+if results['exciton_convergence']:
+    print("Calculation is converged!")
+    print(f"Extrapolated exciton energy: {results['exciton_extrapolated']:.6f} eV")
+```
 
 ---
 
