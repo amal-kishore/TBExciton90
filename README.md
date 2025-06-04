@@ -24,7 +24,7 @@ TBExciton90 computes **exciton properties** (bound electron-hole pairs) in mater
 - **Easy to Use**: One command to go from Wannier90 files to excitonic properties  
 - **Fast**: GPU acceleration and MPI parallelization support  
 - **Scientific**: Proper treatment of electron-hole interactions  
-- **Comprehensive**: Band structures, exciton spectra, absorption, and wavefunctions  
+- **Comprehensive**: Band structures, exciton spectra, and optical absorption  
 
 ## Quick Start
 
@@ -76,8 +76,6 @@ After running TBExciton90, you'll have:
 - **Electronic band structure**
 - **Exciton energy spectrum** distinguishing bright (optically active) vs dark states  
 - **Optical absorption** comparing with/without electron-hole interactions
-- **Real-space wavefunctions** showing exciton size and shape
-- **Summary data**
 
 <p align="center">
   <img src="docs/example_plots.png" alt="Example TBExciton90 outputs" width="800">

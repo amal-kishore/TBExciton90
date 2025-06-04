@@ -181,12 +181,18 @@ class ExcitonPlotter:
                 cbar = plt.colorbar(scatter, ax=ax)
                 cbar.set_label('Oscillator Strength')
                 
-                # Annotate first few bright states
+                # Annotate first few bright states with shorter arrows
                 bright_indices = np.where(bright_idx)[0]
                 for i, (idx, E) in enumerate(zip(bright_indices[:3], bright_energies[:3])):
+                    # Calculate shorter offset for annotation
+                    energy_range = energies.max() - energies.min()
+                    offset_x = 0.5  # Small horizontal offset
+                    offset_y = 0.01 * energy_range  # Small vertical offset (1% of range)
+                    
                     ax.annotate(f'S{i+1}\n{E:.3f} eV', 
-                               xy=(idx, E), xytext=(idx+1, E+0.05),
-                               arrowprops=dict(arrowstyle='->', alpha=0.5))
+                               xy=(idx, E), xytext=(idx + offset_x, E + offset_y),
+                               arrowprops=dict(arrowstyle='->', alpha=0.7, lw=1),
+                               fontsize=9, ha='left')
         else:
             # Simple scatter plot
             ax.scatter(range(states_to_plot), energies,

@@ -171,14 +171,13 @@ mpirun -np 8 tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt --m
 
 **Generate plots from existing results:**
 ```bash
-# Plot all types
+# Plot all types (band structure, exciton spectrum, optical absorption)
 tbx90 plot --results-dir ./results --output-dir ./plots
 
 # Plot specific types
 tbx90 plot --plot-type bands
 tbx90 plot --plot-type excitons --output-dir ./exciton_plots
 tbx90 plot --plot-type absorption
-tbx90 plot --plot-type wavefunctions --results-dir ./my_results
 ```
 
 **Test installation:**
@@ -282,7 +281,6 @@ See `examples/final_demo.py` for comprehensive analysis.
 - `plot_band_structure()`: Electronic bands
 - `plot_exciton_spectrum_enhanced()`: Exciton energies
 - `plot_absorption_comparison_enhanced()`: Optical absorption
-- `plot_exciton_wavefunction_enhanced()`: Real-space visualization
 
 ### Plotting Options
 
@@ -292,8 +290,6 @@ The `plot` command generates high-quality plots from existing calculation result
 - `bands` - Electronic band structure
 - `excitons` - Exciton energy spectrum 
 - `absorption` - Optical absorption comparison
-- `wavefunctions` - Real-space exciton wavefunctions
-- `summary` - Overview plot with all key results
 - `all` - Generate all available plots (default)
 
 **Examples:**

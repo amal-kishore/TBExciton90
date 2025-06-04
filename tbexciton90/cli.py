@@ -207,21 +207,9 @@ def run_calculation(config: Config, parallel: ParallelManager) -> dict:
         click.echo(f"   - Exciton binding energy: {exciton_binding:.3f} eV")
         click.echo(f"   - Optical gap: {exciton_energies[0]:.3f} eV")
     
-    # Step 5: Real-space transformation
+    # Step 5: Compute optical properties
     if parallel.rank == 0:
-        click.echo("\n5. Transforming to real space...")
-        
-    # Create real-space grid
-    R_grid = create_real_space_grid(parser.lattice_vectors)
-    
-    # Transform lowest exciton state
-    exciton_wavefunction_R = bse_solver.transform_to_realspace(
-        exciton_wavefunctions[:, 0], parser.kpoints, R_grid
-    )
-    
-    # Step 6: Compute optical properties
-    if parallel.rank == 0:
-        click.echo("\n6. Computing optical properties...")
+        click.echo("\n5. Computing optical properties...")
         
     # Initialize optical properties calculator
     optical = OpticalProperties(tb_model, bse_solver)
@@ -381,23 +369,6 @@ def generate_plots(results: dict, config: Config):
         )
         click.echo("  - Absorption comparison: optical_absorption_comparison.png")
     
-    # Bright exciton wavefunctions
-    if 'bright_wavefunctions_R' in results and len(results['bright_wavefunctions_R']) > 0:
-        for i, wf_R in enumerate(results['bright_wavefunctions_R']):
-            if 'bright_indices' in results and len(results['bright_indices']) > i:
-                state_idx = results['bright_indices'][i]
-                energy = results['exciton_energies'][state_idx]
-                plotter.plot_exciton_wavefunction(
-                    results['R_grid'],
-                    wf_R,
-                    state_index=i+1,
-                    save_name=f"bright_exciton_S{i+1}_wavefunction.png"
-                )
-                click.echo(f"  - Bright exciton S{i+1} wavefunction: bright_exciton_S{i+1}_wavefunction.png")
-    
-    # Summary plot
-    plotter.plot_summary(results)
-    click.echo("  - Summary: summary.png")
 
 
 @main.command()
@@ -553,7 +524,7 @@ def test():
 @click.option('--output-dir', '-o', default='./plots',
               help='Output directory for plots')
 @click.option('--plot-type', '-t', 
-              type=click.Choice(['bands', 'excitons', 'absorption', 'wavefunctions', 'summary', 'all']),
+              type=click.Choice(['bands', 'excitons', 'absorption', 'all']),
               default='all', help='Type of plot to generate')
 def plot(results_dir, output_dir, plot_type):
     """Generate plots from existing calculation results."""
@@ -622,20 +593,6 @@ def plot(results_dir, output_dir, plot_type):
             results['absorption_no_interaction']
         )
     
-    if plot_type in ['wavefunctions', 'all'] and 'exciton_wavefunctions' in results:
-        click.echo("  - Exciton wavefunctions (first 3 states)")
-        for i in range(min(3, len(results['exciton_energies']))):
-            if results['oscillator_strengths'][i] > 0.001:  # Only bright excitons
-                plotter.plot_exciton_wavefunction(
-                    results['R_grid'],
-                    results['exciton_wavefunctions'][i],
-                    exciton_energy=results['exciton_energies'][i],
-                    save_name=f"exciton_wavefunction_S{i+1}.png"
-                )
-    
-    if plot_type in ['summary', 'all']:
-        click.echo("  - Summary plot")
-        plotter.plot_summary(results)
     
     click.echo(f"\nPlots saved to: {output_dir}")
 
