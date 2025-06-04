@@ -237,15 +237,6 @@ def run_calculation(config: Config, parallel: ParallelManager) -> dict:
         eigenvalues, config.get('model.num_valence')
     )
     
-    # Transform wavefunctions for first two bright excitons
-    bright_wavefunctions_R = []
-    if len(bright_indices) > 0:
-        for i in range(min(2, len(bright_indices))):
-            idx = bright_indices[i]
-            wf_R = bse_solver.transform_to_realspace(
-                exciton_wavefunctions[:, idx], parser.kpoints, R_grid
-            )
-            bright_wavefunctions_R.append(wf_R)
     
     # Collect results
     results = {
@@ -254,9 +245,6 @@ def run_calculation(config: Config, parallel: ParallelManager) -> dict:
         'eigenvectors': eigenvectors,
         'exciton_energies': exciton_energies,
         'exciton_wavefunctions': exciton_wavefunctions,
-        'exciton_wavefunction_R': exciton_wavefunction_R,
-        'bright_wavefunctions_R': bright_wavefunctions_R,
-        'R_grid': R_grid,
         'absorption_energies': absorption_energies,
         'absorption': absorption,
         'absorption_energies_no_int': absorption_energies_no_int,
@@ -273,20 +261,6 @@ def run_calculation(config: Config, parallel: ParallelManager) -> dict:
     return results
 
 
-def create_real_space_grid(lattice_vectors=None, grid_size=50):
-    """Create real-space grid for wavefunction visualization."""
-    if lattice_vectors is not None:
-        # Use lattice vectors to define grid
-        a = lattice_vectors[0, 0] if lattice_vectors.shape[0] > 0 else 10.0
-    else:
-        a = 10.0  # Default 10 Angstrom
-        
-    # Create 1D grid for simplicity
-    x = np.linspace(-2*a, 2*a, grid_size)
-    R_grid = np.column_stack([x, np.zeros_like(x), np.zeros_like(x)])
-    
-    return R_grid
-
 
 def save_results(results: dict, config: Config):
     """Save calculation results."""
@@ -300,8 +274,7 @@ def save_results(results: dict, config: Config):
     with h5py.File(output_file, 'w') as f:
         # Save arrays
         for key in ['kpoints', 'eigenvalues', 'exciton_energies', 
-                   'exciton_wavefunctions', 'R_grid', 'exciton_wavefunction_R',
-                   'absorption_energies', 'absorption']:
+                   'exciton_wavefunctions', 'absorption_energies', 'absorption']:
             if key in results and results[key] is not None:
                 f.create_dataset(key, data=results[key])
                 
@@ -565,7 +538,6 @@ def plot(results_dir, output_dir, plot_type):
         
         if 'exciton_wavefunctions' in f:
             results['exciton_wavefunctions'] = f['exciton_wavefunctions'][:]
-            results['R_grid'] = f['R_grid'][:]
     
     click.echo(f"Generating {plot_type} plots...")
     
