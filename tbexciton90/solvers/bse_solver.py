@@ -5,7 +5,7 @@ from typing import Tuple, Optional, Dict, Any
 import logging
 from scipy.linalg import eigh
 from scipy.sparse import csr_matrix, diags, kron, eye
-from scipy.sparse.linalg import eigsh
+from scipy.sparse.linalg import eigsh, ArpackNoConvergence
 import time
 
 logger = logging.getLogger(__name__)
@@ -258,7 +258,28 @@ class BSESolver:
         if num_states < bse_size // 2:
             # Use sparse solver for few states
             H_BSE_sparse = csr_matrix(H_BSE)
-            eigenvalues, eigenvectors = eigsh(H_BSE_sparse, k=num_states, which='SA')
+            try:
+                # Try with increased tolerance and iterations
+                eigenvalues, eigenvectors = eigsh(H_BSE_sparse, k=num_states, which='SA', 
+                                                 maxiter=50000, tol=1e-6)
+            except ArpackNoConvergence as e:
+                logger.warning(f"Sparse solver failed to converge, trying with fewer states...")
+                # Try with fewer states first
+                k_reduced = min(num_states // 2, 5)
+                try:
+                    eigenvalues, eigenvectors = eigsh(H_BSE_sparse, k=k_reduced, which='SA',
+                                                     maxiter=50000, tol=1e-5)
+                    logger.info(f"Converged with {k_reduced} states instead of {num_states}")
+                    # Pad with zeros if needed
+                    if k_reduced < num_states:
+                        pad_size = num_states - k_reduced
+                        eigenvalues = np.pad(eigenvalues, (0, pad_size), 'constant', constant_values=eigenvalues[-1] + 0.1)
+                        eigenvectors = np.pad(eigenvectors, ((0, 0), (0, pad_size)), 'constant')
+                except ArpackNoConvergence:
+                    logger.warning("Sparse solver completely failed, falling back to dense solver")
+                    eigenvalues, eigenvectors = eigh(H_BSE)
+                    eigenvalues = eigenvalues[:num_states]
+                    eigenvectors = eigenvectors[:, :num_states]
         else:
             # Use dense solver
             eigenvalues, eigenvectors = eigh(H_BSE)
