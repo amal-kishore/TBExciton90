@@ -547,5 +547,98 @@ def test():
         sys.exit(1)
 
 
+@main.command()
+@click.option('--results-dir', '-r', default='./results',
+              help='Directory containing calculation results')
+@click.option('--output-dir', '-o', default='./plots',
+              help='Output directory for plots')
+@click.option('--plot-type', '-t', 
+              type=click.Choice(['bands', 'excitons', 'absorption', 'wavefunctions', 'summary', 'all']),
+              default='all', help='Type of plot to generate')
+def plot(results_dir, output_dir, plot_type):
+    """Generate plots from existing calculation results."""
+    import h5py
+    from .visualization.plotter import ExcitonPlotter
+    
+    # Check if results exist
+    results_file = os.path.join(results_dir, 'exciton_results.h5')
+    if not os.path.exists(results_file):
+        click.echo(f"Error: Results file not found at {results_file}", err=True)
+        click.echo("Run 'tbx90 compute' first to generate results.", err=True)
+        sys.exit(1)
+    
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Initialize plotter (always high quality)
+    plotter = ExcitonPlotter(output_dir=output_dir, style="publication")
+    
+    click.echo(f"Loading results from {results_file}...")
+    
+    # Load results
+    with h5py.File(results_file, 'r') as f:
+        results = {
+            'kpoints': f['kpoints'][:],
+            'eigenvalues': f['eigenvalues'][:],
+            'exciton_energies': f['exciton_energies'][:],
+            'oscillator_strengths': f['oscillator_strengths'][:],
+            'num_valence': f.attrs['num_valence'],
+            'num_conduction': f.attrs['num_conduction']
+        }
+        
+        # Load optional data
+        if 'absorption_energies' in f:
+            results['absorption_energies'] = f['absorption_energies'][:]
+            results['absorption_spectrum'] = f['absorption_spectrum'][:]
+            results['absorption_no_interaction'] = f['absorption_no_interaction'][:]
+        
+        if 'exciton_wavefunctions' in f:
+            results['exciton_wavefunctions'] = f['exciton_wavefunctions'][:]
+            results['R_grid'] = f['R_grid'][:]
+    
+    click.echo(f"Generating {plot_type} plots...")
+    
+    # Generate requested plots
+    if plot_type in ['bands', 'all']:
+        click.echo("  - Band structure")
+        plotter.plot_band_structure(
+            results['kpoints'], 
+            results['eigenvalues'], 
+            results['num_valence']
+        )
+    
+    if plot_type in ['excitons', 'all']:
+        click.echo("  - Exciton spectrum")
+        plotter.plot_exciton_spectrum(
+            results['exciton_energies'],
+            results['oscillator_strengths']
+        )
+    
+    if plot_type in ['absorption', 'all'] and 'absorption_energies' in results:
+        click.echo("  - Optical absorption")
+        plotter.plot_optical_absorption_comparison(
+            results['absorption_energies'],
+            results['absorption_spectrum'],
+            results['absorption_no_interaction']
+        )
+    
+    if plot_type in ['wavefunctions', 'all'] and 'exciton_wavefunctions' in results:
+        click.echo("  - Exciton wavefunctions (first 3 states)")
+        for i in range(min(3, len(results['exciton_energies']))):
+            if results['oscillator_strengths'][i] > 0.001:  # Only bright excitons
+                plotter.plot_exciton_wavefunction(
+                    results['R_grid'],
+                    results['exciton_wavefunctions'][i],
+                    exciton_energy=results['exciton_energies'][i],
+                    save_name=f"exciton_wavefunction_S{i+1}.png"
+                )
+    
+    if plot_type in ['summary', 'all']:
+        click.echo("  - Summary plot")
+        plotter.plot_summary(results)
+    
+    click.echo(f"\nPlots saved to: {output_dir}")
+
+
 if __name__ == "__main__":
     main()

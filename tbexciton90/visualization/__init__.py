@@ -1,6 +1,6 @@
 """Visualization tools for exciton properties."""
 
 from .plotter import ExcitonPlotter
-from .beautiful_plotter import BeautifulExcitonPlotter
+from .advanced_plotter import AdvancedExcitonPlotter
 
-__all__ = ["ExcitonPlotter", "BeautifulExcitonPlotter"]
+__all__ = ["ExcitonPlotter", "AdvancedExcitonPlotter"]

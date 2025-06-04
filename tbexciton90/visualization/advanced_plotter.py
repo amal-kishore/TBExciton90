@@ -1,4 +1,4 @@
-"""Beautiful plotting utilities for TBExciton90."""
+"""Advanced plotting utilities for TBExciton90."""
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -22,8 +22,8 @@ logger = logging.getLogger(__name__)
 set_publication_style()
 
 
-class BeautifulExcitonPlotter:
-    """Beautiful plotting utilities for exciton calculations."""
+class AdvancedExcitonPlotter:
+    """Advanced plotting utilities for exciton calculations."""
     
     def __init__(self, output_dir: str = "./results"):
         """Initialize plotter with output directory."""
@@ -34,7 +34,7 @@ class BeautifulExcitonPlotter:
                           num_valence: int, k_labels: Optional[List[str]] = None,
                           energy_range: Optional[Tuple[float, float]] = None,
                           save_name: str = "band_structure.png") -> Figure:
-        """Plot beautiful electronic band structure."""
+        """Plot electronic band structure with enhanced styling."""
         fig, ax = plt.subplots(figsize=(10, 8))
         
         # Calculate k-path distance
@@ -106,11 +106,11 @@ class BeautifulExcitonPlotter:
         
         return fig
     
-    def plot_exciton_spectrum_beautiful(self, exciton_energies: np.ndarray,
+    def plot_exciton_spectrum_enhanced(self, exciton_energies: np.ndarray,
                                       oscillator_strengths: Optional[np.ndarray] = None,
                                       num_states: int = 50,
                                       save_name: str = "exciton_spectrum.png") -> Figure:
-        """Plot beautiful exciton energy spectrum."""
+        """Plot exciton energy spectrum with enhanced visualization."""
         fig, ax = plt.subplots(figsize=(12, 8))
         
         states_to_plot = min(num_states, len(exciton_energies))
@@ -207,7 +207,7 @@ class BeautifulExcitonPlotter:
         
         return fig
     
-    def plot_absorption_comparison_beautiful(self, 
+    def plot_absorption_comparison_enhanced(self, 
                                            energies_with: np.ndarray, 
                                            absorption_with: np.ndarray,
                                            energies_without: np.ndarray,
@@ -215,7 +215,7 @@ class BeautifulExcitonPlotter:
                                            exciton_energies: Optional[np.ndarray] = None,
                                            oscillator_strengths: Optional[np.ndarray] = None,
                                            save_name: str = "absorption_comparison.png") -> Figure:
-        """Plot beautiful absorption spectrum comparison."""
+        """Plot absorption spectrum comparison with enhanced styling."""
         fig, ax = plt.subplots(figsize=(12, 8))
         
         # Plot absorption without interaction
@@ -327,12 +327,12 @@ class BeautifulExcitonPlotter:
         
         return fig
     
-    def plot_exciton_wavefunction_beautiful(self, R_grid: np.ndarray,
+    def plot_exciton_wavefunction_enhanced(self, R_grid: np.ndarray,
                                           wavefunction: np.ndarray,
                                           state_index: int = 0,
                                           energy: Optional[float] = None,
                                           save_name: Optional[str] = None) -> Figure:
-        """Plot beautiful exciton wavefunction."""
+        """Plot exciton wavefunction with enhanced visualization."""
         if save_name is None:
             save_name = f"exciton_wavefunction_S{state_index}.png"
         

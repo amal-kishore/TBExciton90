@@ -8,7 +8,7 @@ def test_imports():
     from tbexciton90 import Wannier90Parser, TightBindingModel, BSESolver
     from tbexciton90.solvers import OpticalProperties
     from tbexciton90.utils import Config, ParallelManager
-    from tbexciton90.visualization import ExcitonPlotter, BeautifulExcitonPlotter
+    from tbexciton90.visualization import ExcitonPlotter, AdvancedExcitonPlotter
     assert True
 
 def test_config():

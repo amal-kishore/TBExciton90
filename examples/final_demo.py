@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Final demonstration of TBExciton90 with beautiful aesthetics.
+Final demonstration of TBExciton90 with advanced visualization.
 """
 
 import numpy as np
@@ -9,10 +9,10 @@ import matplotlib.pyplot as plt
 # Import TBExciton90
 from tbexciton90 import Wannier90Parser, TightBindingModel, BSESolver
 from tbexciton90.solvers import OpticalProperties
-from tbexciton90.visualization import BeautifulExcitonPlotter
+from tbexciton90.visualization import AdvancedExcitonPlotter
 
 print("=" * 60)
-print("🌟 TBExciton90: Beautiful Exciton Analysis")
+print("TBExciton90: Advanced Exciton Analysis")
 print("=" * 60)
 
 # Quick computation using convenience function
@@ -30,7 +30,7 @@ try:
 except:
     print("Running detailed analysis...")
 
-# Detailed analysis with beautiful plots
+# Detailed analysis with advanced plots
 parser = Wannier90Parser()
 parser.parse_hr_file('silicon_hr.dat')
 parser.parse_kpt_file('silicon_band.kpt')
@@ -49,18 +49,18 @@ oscillator_strengths = optical.compute_oscillator_strengths(
 )
 
 # Test new command-line interface
-print("\n🎨 Testing command-line interface:")
+print("\nTesting command-line interface:")
 print("tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt")
 
-# Create beautiful summary
-plotter = BeautifulExcitonPlotter(output_dir="final_demo")
+# Create comprehensive summary
+plotter = AdvancedExcitonPlotter(output_dir="final_demo")
 
-print("\n🎯 Results Summary:")
-print(f"  • Parsed {parser.num_wann} Wannier functions")
-print(f"  • Computed {len(exciton_energies)} exciton states")
+print("\nResults Summary:")
+print(f"  - Parsed {parser.num_wann} Wannier functions")
+print(f"  - Computed {len(exciton_energies)} exciton states")
 print(f"  • Found {np.sum(oscillator_strengths > 0.01)} bright excitons")
 print(f"  • Lowest exciton: {exciton_energies[0]:.3f} eV")
 
-print("\n📊 Generated beautiful plots in 'final_demo/' directory")
+print("\nGenerated plots in 'final_demo/' directory")
 print("   Ready for GitHub repository! 🚀")
 print("=" * 60)

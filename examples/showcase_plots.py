@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Showcase beautiful plots from TBExciton90.
+Showcase advanced plots from TBExciton90.
 """
 
 import numpy as np
@@ -9,10 +9,10 @@ sys.path.append('..')
 
 from tbexciton90 import Wannier90Parser, TightBindingModel, BSESolver
 from tbexciton90.solvers import OpticalProperties
-from tbexciton90.visualization import BeautifulExcitonPlotter
+from tbexciton90.visualization import AdvancedExcitonPlotter
 
 print("="*60)
-print("TBExciton90: Beautiful Exciton Analysis")
+print("TBExciton90: Advanced Exciton Analysis")
 print("="*60)
 
 # Parse Wannier90 outputs
@@ -73,37 +73,37 @@ for i in range(min(2, len(bright_indices))):
     )
     bright_wavefunctions_R.append(wf_R)
 
-# Create beautiful plots
-print("\nGenerating beautiful plots...")
-plotter = BeautifulExcitonPlotter(output_dir="beautiful_results")
+# Create advanced plots
+print("\nGenerating advanced plots...")
+plotter = AdvancedExcitonPlotter(output_dir="showcase_results")
 
 # 1. Band structure
 fig1 = plotter.plot_band_structure(
     parser.kpoints, eigenvalues, num_valence,
-    save_name="beautiful_bands.png"
+    save_name="band_structure.png"
 )
 
 # 2. Exciton spectrum
-fig2 = plotter.plot_exciton_spectrum_beautiful(
+fig2 = plotter.plot_exciton_spectrum_enhanced(
     exciton_energies[:50], oscillator_strengths[:50],
-    save_name="beautiful_exciton_spectrum.png"
+    save_name="exciton_spectrum.png"
 )
 
 # 3. Absorption comparison
-fig3 = plotter.plot_absorption_comparison_beautiful(
+fig3 = plotter.plot_absorption_comparison_enhanced(
     energies_with, absorption_with,
     energies_without, absorption_without,
     exciton_energies, oscillator_strengths,
-    save_name="beautiful_absorption.png"
+    save_name="optical_absorption.png"
 )
 
 # 4. Exciton wavefunctions
 for i, wf_R in enumerate(bright_wavefunctions_R):
     energy = exciton_energies[bright_indices[i]]
-    fig = plotter.plot_exciton_wavefunction_beautiful(
+    fig = plotter.plot_exciton_wavefunction_enhanced(
         R_grid, wf_R, state_index=i+1, energy=energy,
-        save_name=f"beautiful_exciton_S{i+1}.png"
+        save_name=f"exciton_wavefunction_S{i+1}.png"
     )
 
-print("\nBeautiful plots saved to 'beautiful_results/' directory!")
+print("\nPlots saved to 'showcase_results/' directory!")
 print("="*60)

@@ -1,12 +1,12 @@
 # Contributing to TBExciton90
 
-We love your input! We want to make contributing to TBExciton90 as easy and transparent as possible, whether it's:
+Contributions to TBExciton90 are welcome. You can contribute by:
 
-- Reporting a bug
-- Discussing the current state of the code
-- Submitting a fix
+- Reporting bugs
+- Discussing code improvements
+- Submitting fixes
 - Proposing new features
-- Becoming a maintainer
+- Helping with maintenance
 
 ## Development Process
 

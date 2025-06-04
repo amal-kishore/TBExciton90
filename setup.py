@@ -11,7 +11,7 @@ setup(
     version="0.1.0",
     author="TBExciton90 Development Team",
     author_email="",
-    description="Tight-binding exciton calculations from Wannier90 outputs",
+    description="Excitonic properties from Wannier-based tight-binding models",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/amal-kishore/TBExciton90",

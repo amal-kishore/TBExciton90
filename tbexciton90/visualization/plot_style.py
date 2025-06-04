@@ -1,4 +1,4 @@
-"""Beautiful plotting styles for TBExciton90."""
+"""Professional plotting styles for TBExciton90."""
 
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -114,7 +114,7 @@ def get_gradient_colormap(color1='#2E86AB', color2='#E63946', n_colors=256):
 
 def add_colorbar(fig, ax, mappable, label='', orientation='vertical', 
                  size='5%', pad=0.1, **kwargs):
-    """Add a beautiful colorbar to the plot."""
+    """Add a colorbar to the plot."""
     from mpl_toolkits.axes_grid1 import make_axes_locatable
     
     divider = make_axes_locatable(ax)

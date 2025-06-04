@@ -45,7 +45,7 @@
     \includegraphics[width=0.3\textwidth]{logo.png}\\[1cm]
     {\Huge \textbf{TBExciton90}}\\[0.5cm]
     {\Large Technical Manual and User Guide}\\[0.3cm]
-    {\large Tight-Binding Exciton Calculations from Wannier90}
+    {\large Excitonic Properties from Wannier-based Tight-binding Models}
 }
 
 \author{
@@ -62,7 +62,7 @@
 
 \vfill
 \begin{center}
-\textit{Beautiful • Fast • GPU-Accelerated}
+\textit{Fast • GPU-Accelerated • Comprehensive}
 \end{center}
 
 \newpage
@@ -78,13 +78,23 @@ TBExciton90 is a comprehensive Python package designed for computing exciton pro
 
 Excitons are bound states of electrons and holes that play a crucial role in the optical properties of semiconductors and insulators. When a photon is absorbed by a material, it creates an electron-hole pair. Due to Coulomb attraction, these particles can form bound states below the electronic band gap, leading to sharp absorption peaks and modified optical spectra.
 
+\subsubsection{Key Concepts in Simple Terms}
+
+\begin{itemize}
+    \item \textbf{Electron}: Negative charge carrier in the conduction band
+    \item \textbf{Hole}: Positive charge carrier (missing electron) in the valence band
+    \item \textbf{Exciton}: Bound electron-hole pair (like a hydrogen atom in a solid)
+    \item \textbf{Binding Energy}: Energy required to separate the electron and hole
+    \item \textbf{Optical Gap}: Energy of the lowest bright exciton state
+\end{itemize}
+
 \subsection{Why TBExciton90?}
 
 \begin{itemize}
     \item \textbf{Wannier90 Integration}: Direct parsing of Wannier90 outputs
     \item \textbf{Complete Framework}: From band structure to optical absorption
     \item \textbf{High Performance}: GPU acceleration and MPI parallelization
-    \item \textbf{Beautiful Visualization}: Publication-ready plots
+    \item \textbf{Professional Visualization}: Publication-ready plots
     \item \textbf{Open Source}: MIT license for maximum accessibility
 \end{itemize}
 
@@ -144,6 +154,8 @@ The exciton wavefunction is expanded in the basis of electron-hole pairs:
 \ket{\Psi^S} = \sum_{vc\mathbf{k}} A^S_{vc\mathbf{k}} \ket{vc\mathbf{k}}
 \end{equation}
 
+In simpler terms: The exciton state is a linear combination of electron-hole pairs with specific coefficients $A^S$.
+
 where:
 \begin{itemize}
     \item $S$ labels exciton states
@@ -157,8 +169,15 @@ where:
 The BSE takes the matrix form:
 
 \begin{equation}
-\sum_{v'c'\mathbf{k}'} H^{\text{BSE}}_{vc\mathbf{k},v'c'\mathbf{k}'} A^S_{v'c'\mathbf{k}'} = \Omega^S A^S_{vc\mathbf{k}}
+H^{\text{BSE}} A^S = \Omega^S A^S
 \end{equation}
+
+This is an eigenvalue equation where:
+\begin{itemize}
+\item $H^{\text{BSE}}$ is the exciton Hamiltonian matrix
+\item $A^S$ are the eigenvectors (exciton wavefunctions)
+\item $\Omega^S$ are the eigenvalues (exciton energies)
+\end{itemize}
 
 where $\Omega^S$ are exciton energies and the BSE Hamiltonian is:
 
@@ -181,8 +200,10 @@ where $W_0$ is an effective screening parameter (typically 0.1-1.0 eV). This app
 For more sophisticated calculations, the full kernel can be written as:
 
 \begin{equation}
-K_{vc\mathbf{k},v'c'\mathbf{k}'} = \int d\mathbf{r} d\mathbf{r}' \psi^*_{c\mathbf{k}}(\mathbf{r}) \psi_{v\mathbf{k}}(\mathbf{r}) W(\mathbf{r},\mathbf{r}') \psi_{c'\mathbf{k}'}(\mathbf{r}') \psi^*_{v'\mathbf{k}'}(\mathbf{r}')
+K = \langle vc\mathbf{k} | W | v'c'\mathbf{k}' \rangle
 \end{equation}
+
+This represents the screened Coulomb interaction between electron-hole pairs.
 
 where $W(\mathbf{r},\mathbf{r}')$ is the screened Coulomb interaction.
 
@@ -246,7 +267,7 @@ TBExciton90 is organized into several modules:
     \item \textbf{core}: Wannier90 parser and tight-binding model
     \item \textbf{solvers}: BSE solver and optical properties calculator
     \item \textbf{utils}: Configuration management and parallel computing
-    \item \textbf{visualization}: Beautiful plotting system
+    \item \textbf{visualization}: Advanced plotting system
 \end{itemize}
 
 \subsection{Key Algorithms}
@@ -363,7 +384,7 @@ print(f"Binding energy: {results['binding_energy']:.3f} eV")
 \begin{lstlisting}[language=Python]
 from tbexciton90 import Wannier90Parser, TightBindingModel, BSESolver
 from tbexciton90.solvers import OpticalProperties
-from tbexciton90.visualization import BeautifulExcitonPlotter
+from tbexciton90.visualization import AdvancedExcitonPlotter
 
 # Parse Wannier90 outputs
 parser = Wannier90Parser()
@@ -393,9 +414,9 @@ oscillator_strengths = optical.compute_oscillator_strengths(
 bright_indices = optical.identify_bright_excitons(oscillator_strengths)
 print(f"Found {len(bright_indices)} bright excitons")
 
-# Generate beautiful plots
-plotter = BeautifulExcitonPlotter(output_dir='results')
-plotter.plot_exciton_spectrum_beautiful(
+# Generate plots
+plotter = AdvancedExcitonPlotter(output_dir='results')
+plotter.plot_exciton_spectrum_enhanced(
     exciton_energies, oscillator_strengths
 )
 \end{lstlisting}
