@@ -38,6 +38,9 @@ pip install tbexciton90
 # Main command: computes bands, solves BSE, calculates optical properties, generates plots
 tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt
 
+# Standalone BSE solver with advanced screening models
+python examples/bse_solver_silicon.py --scissor 0.23 --screening penn --kmesh 18
+
 # Generate configuration file
 tbx90 generate-config --example minimal --output config.yaml
 
