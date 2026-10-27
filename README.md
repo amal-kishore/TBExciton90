@@ -1,147 +1,108 @@
 # TBExciton90
 
-<p align="center">
-  <strong>Excitonic Properties from Wannier-based Tight-binding Models</strong>
-  <br>
-  <em>Fast • GPU-Accelerated • Comprehensive</em>
-</p>
+Bethe-Salpeter solver for excitons in a Wannier / tight-binding basis.
+Takes Wannier90 output plus DFT eigenvalues (QE `bands.x` or `*.eig`),
+builds the electron-hole Hamiltonian with a Rytova-Keldysh (or extended
+RK) screened interaction, and diagonalises it.
 
-<p align="center">
-  <a href="https://github.com/amal-kishore/TBExciton90/blob/main/INSTALL.md">Installation</a> •
-  <a href="https://github.com/amal-kishore/TBExciton90/blob/main/docs/TBExciton90_Manual.md">Manual</a> •
-  <a href="https://github.com/amal-kishore/TBExciton90/tree/main/examples">Examples</a> •
-  <a href="https://github.com/amal-kishore/TBExciton90/issues">Support</a>
-</p>
+The code supports both Q = 0 (optical excitons) and finite centre-of-mass
+momentum Q, so the full exciton band structure
+Omega_S(Q) along a BZ path can be computed in one run.
 
----
+A `cupy` GPU backend is used automatically if available; otherwise the
+code falls back to `numpy`.
 
-## What is TBExciton90?
+## Install
 
-TBExciton90 computes **exciton properties** (bound electron-hole pairs) in materials using tight-binding models from **Wannier90**. It's designed for condensed matter physicists studying optical properties of semiconductors and 2D materials.
-
-### Key Features
-
-- **Easy to Use**: One command to go from Wannier90 files to excitonic properties  
-- **Fast**: GPU acceleration and MPI parallelization support  
-- **Scientific**: Proper treatment of electron-hole interactions  
-- **Comprehensive**: Band structures, exciton spectra, and optical absorption  
-
-## Quick Start
-
-### Installation
-```bash
-pip install tbexciton90
+```
+git clone https://github.com/amal-kishore/TBExciton90.git
+cd TBExciton90
+pip install -e .
 ```
 
-### Basic Usage
-```bash
-# Main command: computes bands, solves BSE, calculates optical properties, generates plots
-tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt
+Optional GPU acceleration:
 
-# Standalone BSE solver with advanced screening models
-python examples/bse_solver_silicon.py --scissor 0.23 --screening penn --kmesh 18
-
-# Generate configuration file
-tbx90 generate-config --example minimal --output config.yaml
-
-# Run with configuration
-tbx90 compute --config config.yaml
-
-# With GPU acceleration
-tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt --gpu
-
-# With MPI parallelization (4 processes)
-mpirun -np 4 tbx90 compute --input silicon_hr.dat --kpoints silicon_band.kpt --mpi
-
-# Test k-point convergence (essential for reliable results)
-tbx90 convergence --input silicon_hr.dat --material-type 3D
-
-# Generate plots from existing results
-tbx90 plot --results-dir ./results --plot-type all
-tbx90 plot --plot-type excitons
+```
+pip install -e .[gpu]
 ```
 
-### Python API
-```python
-import tbexciton90 as tbx
+## Quick start
 
-# Quick analysis
-results = tbx.compute_excitons(
-    hr_file='material_hr.dat',
-    kpt_file='material_band.kpt'
-)
+Monolayer WSe2, standard RK vs. extended RK, exciton spectrum + absorption:
 
-print(f"Optical gap: {results['exciton_energies'][0]:.3f} eV")
-print(f"Binding energy: {results['binding_energy']:.3f} eV")
+```
+python examples/wse2/wse2_bse.py
 ```
 
-## What You Get
+Finite-Q exciton dispersion along Gamma -> M (and parabolic fit for the
+exciton mass):
 
-After running TBExciton90, you'll have:
-
-- **Electronic band structure**
-- **Exciton energy spectrum** distinguishing bright (optically active) vs dark states  
-- **Optical absorption** comparing with/without electron-hole interactions
-
-<p align="center">
-  <img src="docs/example_plots.png" alt="Example TBExciton90 outputs" width="800">
-</p>
-
-## Input Requirements
-
-You need **Wannier90** output files:
-- `*_hr.dat` - Tight-binding Hamiltonian
-- `*_band.kpt` - k-points for band structure  
-- `*_centres.xyz` - Wannier function centers (optional)
-
-These are standard outputs from any Wannier90 calculation.
-
-## Who Should Use This?
-
-- **Experimentalists** wanting to understand optical spectra
-- **Theorists** studying excitons in 2D materials
-- **Students** learning about many-body effects in solids
-- **Anyone** working with Wannier90 who needs excitonic properties
-
-## Performance
-
-- **Small systems** (< 100 k-points): Seconds on laptop
-- **Medium systems** (< 1000 k-points): Minutes on workstation  
-- **Large systems** (> 1000 k-points): Use GPU acceleration
-- **Huge systems** (> 10,000 k-points): Use MPI parallelization
-
-## Documentation
-
-- 📖 **[Technical Manual](docs/TBExciton90_Manual.md)** - Complete physics and mathematics
-- 📦 **[Installation Guide](INSTALL.md)** - Setup with GPU/MPI support
-- 🚀 **[Examples](examples/)** - Tutorial notebooks and scripts
-- 🎯 **[API Reference](docs/api/)** - Function documentation
-
-## Citing TBExciton90
-
-If you use TBExciton90 in your research, please cite:
-
-```bibtex
-@software{tbexciton90,
-  title = {TBExciton90: Excitonic properties from Wannier-based tight-binding models},
-  author = {amal kishore},
-  year = {2025},
-  url = {https://github.com/amal-kishore/TBExciton90},
-  version = {0.1.0}
-}
+```
+python examples/wse2/wse2_finiteQ.py
 ```
 
-## Contributing
+Exciton band structure along Gamma -> M -> K -> Gamma:
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+```
+python examples/wse2/wse2_exciton_bandstructure.py
+```
 
-## Support
+Dense-grid run with real-space envelopes |Psi_S(r_e - r_h)|^2:
 
-- **Bug reports**: [GitHub Issues](https://github.com/amal-kishore/TBExciton90/issues)
-- **Questions**: [GitHub Discussions](https://github.com/amal-kishore/TBExciton90/discussions)  
-- **Email**: amalk4905@gmail.com
+```
+python examples/wse2/wse2_density.py
+```
+
+Monolayer InSe (direct gap at Gamma):
+
+```
+python examples/inse/inse_bse.py
+python examples/inse/inse_density.py
+```
+
+2D Wannier-equation reference solve (effective-mass, no DFT input needed):
+
+```
+python examples/wannier_baseline.py
+```
+
+The Wannier90 + QE inputs for WSe2 and InSe are shipped under
+`examples/<material>/wannier_data/`, so each script runs out of the box.
+Outputs are written to `results_<material>/` in the current directory.
+
+## Package layout
+
+```
+tbexciton90/
+    bse/            BSE Hamiltonian (Q = 0 and finite-Q),
+                    diagonalisation, absorption, exciton envelopes,
+                    Wannier interpolation on dense grids
+    potentials/     RytovaKeldysh, ExtendedRytovaKeldysh
+    io/             Wannier90 (.win, .wout, _hr.dat, _u.mat,
+                    _u_dis.mat) and QE `bands.x` readers; HDF5 output
+    analysis/       2D Wannier-equation reference solver
+    backends/       numpy / cupy backend switch
+```
+
+## What's new in 0.2
+
+- Finite-Q BSE: compute Omega_S(Q) at arbitrary centre-of-mass momentum
+  via Wannier interpolation of the electron bands and projectors.
+- `bse.compute_exciton_dispersion` sweeps a list of Q-points and returns
+  the lowest-N eigenvalues at each.
+- Extended Rytova-Keldysh potential with a free-carrier screening
+  wavevector q_s, for doped / lightly screened monolayers.
+- Package renamed `tbexciton90` (previously `wanbse` in development).
+
+## References
+
+- L. V. Keldysh, JETP Lett. 29, 658 (1979).
+- P. Cudazzo, I. V. Tokatly, A. Rubio, Phys. Rev. B 84, 085406 (2011).
+- G. Berghauser, E. Malic, Phys. Rev. B 89, 125309 (2014).
+- D. Y. Qiu, F. H. da Jornada, S. G. Louie,
+  Phys. Rev. Lett. 115, 176801 (2015).
+- Y. Cho, T. C. Berkelbach, Phys. Rev. B 97, 041409(R) (2018).
 
 ## License
 
-TBExciton90 is open source under the [MIT License](LICENSE).
-
+MIT. See `LICENSE`.
