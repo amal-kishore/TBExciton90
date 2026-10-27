@@ -1,17 +1,13 @@
+"""TBExciton90 — Bethe-Salpeter solver in a Wannier / tight-binding basis.
+
+Submodules
+----------
+potentials  screened e-h interaction kernels (RK, extended RK)
+bse         BSE Hamiltonian construction, diagonalisation, absorption,
+            finite-Q exciton dispersion
+io          Wannier90 / QE readers, HDF5 output
+analysis    2D Wannier-equation reference solver
+backends    numpy / cupy backend switch
 """
-Exciton-Wannier90: Compute exciton properties from Wannier90 outputs.
-"""
 
-__version__ = "0.1.0"
-
-from .core.parser import Wannier90Parser
-from .core.tb_model import TightBindingModel
-from .solvers.bse_solver import BSESolver
-from .utils.config import Config
-
-__all__ = [
-    "Wannier90Parser",
-    "TightBindingModel", 
-    "BSESolver",
-    "Config",
-]
+__version__ = "0.2.0"
